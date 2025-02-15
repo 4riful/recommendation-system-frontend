@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import axios from "axios";
+import { FaFrown } from "react-icons/fa";
 
 /* --------------------------------------------------
  * HorizontalTimeline Component using DaisyUI Steps
@@ -125,86 +126,101 @@ function HorizontalTimeline({ status, createdAt, updatedAt }) {
 }
 
 /* --------------------------------------------------
- * Main Page Component
+ * Main Page Component: ApplicantApplicationsPage
  * -------------------------------------------------- */
 export default function ApplicantApplicationsPage() {
   const [applications, setApplications] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  // Withdraw function: Sends a DELETE request and removes the application on success.
-  const handleWithdraw = async (applicationId) => {
-    if (!confirm("Are you sure you want to withdraw your application?")) return;
+  // Define fetchApps as a useCallback so we can call it on demand.
+  const fetchApps = useCallback(async () => {
+    setLoading(true);
+    setError("");
     const token = localStorage.getItem("token");
-    try {
-      await axios.delete(`${process.env.NEXT_PUBLIC_API_URL}/api/applications/${applicationId}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      setApplications((prev) => prev.filter((app) => app.application_id !== applicationId));
-    } catch (err) {
-      console.error("Failed to withdraw application:", err);
-      alert("Failed to withdraw application.");
+    const applicantProfileId = localStorage.getItem("applicantProfileId");
+
+    if (!applicantProfileId) {
+      setError("No applicant profile found. Please create one first.");
+      setLoading(false);
+      return;
     }
-  };
+
+    try {
+      const { data } = await axios.get(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/applications/applicant/${applicantProfileId}`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      // If API returns an array of applications
+      if (data && Array.isArray(data.data) && data.data.length > 0) {
+        setApplications(data.data);
+      } else {
+        // Gracefully handle empty applications
+        setApplications([]);
+        setError("You have not applied for any jobs yet.");
+      }
+    } catch (err) {
+      console.error("Error fetching applications:", err);
+      if (err.response?.status === 404) {
+        // Graceful error message for 404
+        setApplications([]);
+        setError("No applications found. You haven't applied for any jobs yet.");
+      } else {
+        setError("Failed to fetch applications.");
+      }
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
   // Fetch applications on component mount.
   useEffect(() => {
-    async function fetchApps() {
-      setLoading(true);
-      setError("");
-      const token = localStorage.getItem("token");
-      const applicantProfileId = localStorage.getItem("applicantProfileId");
-      if (!applicantProfileId) {
-        setError("No applicant profile found. Please create one first.");
-        setLoading(false);
-        return;
-      }
-      try {
-        const { data } = await axios.get(
-          `${process.env.NEXT_PUBLIC_API_URL}/api/applications/applicant/${applicantProfileId}`,
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
-        if (data && data.data) {
-          setApplications(data.data);
-        } else {
-          setError("No application data found.");
-        }
-      } catch (err) {
-        console.error("Error fetching applications:", err);
-        setError("Failed to fetch applications.");
-      } finally {
-        setLoading(false);
-      }
-    }
     fetchApps();
-  }, []);
+  }, [fetchApps]);
 
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-[#282a36]">
-        <div className="flex items-center space-x-4">
+        <div className="flex flex-col items-center space-y-4">
           <span className="loading loading-spinner loading-lg text-[#8be9fd]" />
-          <span className="text-xl font-medium text-[#f8f8f2]">Loading applications...</span>
+          <span className="text-xl font-medium text-[#f8f8f2]">
+            Loading applications...
+          </span>
         </div>
       </div>
     );
   }
 
-  if (error) {
+  // If error exists (including 404) and no applications
+  if (error && applications.length === 0) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-[#282a36]">
-        <p className="text-red-400 text-xl">{error}</p>
+      <div className="flex flex-col items-center justify-center min-h-screen bg-[#282a36]">
+        <FaFrown className="text-6xl text-red-500 mb-4" />
+        <p className="text-xl text-[#f8f8f2] text-center">{error}</p>
+        <button
+          onClick={fetchApps}
+          className="mt-4 btn btn-primary"
+        >
+          Retry
+        </button>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen ">
-      <div className="max-w-8xl">
+    <div className="min-h-screen bg-[#282a36] py-8 px-4">
+      <div className="max-w-8xl mx-auto">
         {applications.length === 0 ? (
-          <p className="text-[#f8f8f2] text-lg text-center">
-            You have not applied for any jobs yet.
-          </p>
+          <div className="flex flex-col items-center justify-center">
+            <FaFrown className="text-6xl text-red-500 mb-4" />
+            <p className="text-[#f8f8f2] text-lg text-center">
+              You have not applied for any jobs yet.
+            </p>
+            <button onClick={fetchApps} className="mt-4 btn btn-primary">
+              Refresh
+            </button>
+          </div>
         ) : (
           <div className="space-y-8">
             {applications.map((app) => (

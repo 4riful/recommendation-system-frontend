@@ -20,7 +20,7 @@ import {
   FaMapMarkerAlt,
 } from "react-icons/fa";
 
-const placeholderImage = "/images/default-profile.png";
+const placeholderImage = "https://ui-avatars.com/api/?name=Profile&background=44475a&color=f8f8f2";
 
 // Simple helper to format ISO date strings into a more readable format
 function formatDate(dateString) {
@@ -39,11 +39,16 @@ function formatDate(dateString) {
 export default function ProfileCard({ profile }) {
   const [imageError, setImageError] = useState(false);
   const [showDetails, setShowDetails] = useState(false);
+  useEffect(() => {
+    if (profile !== undefined && profile !== null && !profile.applicantProfileId) {
+      router.push("/dashboard/applicant/profile/create");
+    }
+  }, [profile, router]);
 
   /***********************************************
    * 1. Early return if no data
    ***********************************************/
-  if (!profile) {
+  if (profile === null || profile === undefined) {
     return (
       <p className="text-center text-sm mt-4 text-red-500">
         No profile data available.
