@@ -37,7 +37,7 @@ function HorizontalTimeline({ status, createdAt, updatedAt }) {
         }
         /* Accepted: step-success using green and cyan */
         .step-success[data-content]:before {
-          background: linear-gradient(135deg,rgb(4, 165, 201), #50fa7b);
+          background: linear-gradient(135deg,rgb(4, 165, 201),rgb(121, 246, 152));
           border: 0.5px solid #bd93f9;
         }
         /* Rejected: step-error using red and pink */
