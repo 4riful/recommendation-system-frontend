@@ -28,27 +28,27 @@ function HorizontalTimeline({ status, createdAt, updatedAt }) {
         /* Submitted: step-primary using cyan and purple */
         .step-primary[data-content]:before {
           background: linear-gradient(135deg, #8be9fd, #bd93f9);
-          border: .5px solid #bd93f9;
+          border: 0.5px solid #bd93f9;
         }
         /* In Review: step-info using pink and purple */
         .step-info[data-content]:before {
           background: linear-gradient(135deg, #ff79c6, #bd93f9);
-          border: .5px solid #bd93f9;
+          border: 0.5px solid #bd93f9;
         }
         /* Accepted: step-success using green and cyan */
         .step-success[data-content]:before {
           background: linear-gradient(135deg, #50fa7b, #8be9fd);
-          border: .5px solid #bd93f9;
+          border: 0.5px solid #bd93f9;
         }
         /* Rejected: step-error using red and pink */
         .step-error[data-content]:before {
           background: linear-gradient(135deg, #ff5555, #ff79c6);
-          border: .5px solid #bd93f9;
+          border: 0.5px solid #bd93f9;
         }
         /* Inactive: step-secondary using dark gray background */
         .step-secondary[data-content]:before {
           background: #44475a;
-          border: .5px solid #bd93f9;
+          border: 0.5px solid #bd93f9;
         }
       `}</style>
 
@@ -210,6 +210,28 @@ export default function ApplicantApplicationsPage() {
     }
   }, []);
 
+  // Implement handleWithdraw to delete an application
+  const handleWithdraw = useCallback(
+    async (applicationId) => {
+      if (!window.confirm("Are you sure you want to withdraw your application?"))
+        return;
+
+      const token = localStorage.getItem("token");
+      try {
+        await axios.delete(
+          `${process.env.NEXT_PUBLIC_API_URL}/api/applications/${applicationId}`,
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        // Refresh the applications list after a successful deletion
+        fetchApps();
+      } catch (err) {
+        console.error("Error withdrawing application:", err);
+        alert(err.response?.data?.message || "Failed to withdraw application.");
+      }
+    },
+    [fetchApps]
+  );
+
   // Fetch applications on component mount.
   useEffect(() => {
     fetchApps();
@@ -231,13 +253,10 @@ export default function ApplicantApplicationsPage() {
   // If error exists (including 404) and no applications
   if (error && applications.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen bg-[#282a36]">
+      <div className="flex flex-col items-center justify-center min-h-screen bg-[#282a36] text-white">
         <FaFrown className="text-6xl text-red-500 mb-4" />
         <p className="text-xl text-[#f8f8f2] text-center">{error}</p>
-        <button
-          onClick={fetchApps}
-          className="mt-4 btn btn-primary"
-        >
+        <button onClick={fetchApps} className="mt-4 btn btn-primary">
           Retry
         </button>
       </div>
@@ -245,7 +264,7 @@ export default function ApplicantApplicationsPage() {
   }
 
   return (
-    <div className="min-h-screen  py-8 px-4">
+    <div className="min-h-screen py-8 px-4">
       <div className="max-w-8xl mx-auto">
         {applications.length === 0 ? (
           <div className="flex flex-col items-center justify-center">
