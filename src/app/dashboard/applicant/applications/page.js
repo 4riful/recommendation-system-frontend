@@ -245,7 +245,7 @@ export default function ApplicantApplicationsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#282a36] py-8 px-4">
+    <div className="min-h-screen  py-8 px-4">
       <div className="max-w-8xl mx-auto">
         {applications.length === 0 ? (
           <div className="flex flex-col items-center justify-center">

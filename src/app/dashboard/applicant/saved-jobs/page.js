@@ -148,7 +148,7 @@ export default function SavedJobs() {
   );
 
   return (
-    <div className="min-h-screen bg-[#282a36] text-white p-8">
+    <div className="min-h-screen  text-white p-8">
       <div className="max-w-7xl mx-auto">
         <h1 className="text-4xl font-extrabold mb-8 text-center">
           Saved & Loved Jobs
