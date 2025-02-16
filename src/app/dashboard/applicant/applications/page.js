@@ -37,7 +37,7 @@ function HorizontalTimeline({ status, createdAt, updatedAt }) {
         }
         /* Accepted: step-success using green and cyan */
         .step-success[data-content]:before {
-          background: linear-gradient(135deg, #50fa7b, #8be9fd);
+          background: linear-gradient(135deg, #8be9fd, #50fa7b);
           border: 0.5px solid #bd93f9;
         }
         /* Rejected: step-error using red and pink */
@@ -239,7 +239,7 @@ export default function ApplicantApplicationsPage() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-[#282a36]">
+      <div className="flex items-center justify-center min-h-screen ">
         <div className="flex flex-col items-center space-y-4">
           <span className="loading loading-spinner loading-lg text-[#8be9fd]" />
           <span className="text-xl font-medium text-[#f8f8f2]">
