@@ -22,106 +22,142 @@ function HorizontalTimeline({ status, createdAt, updatedAt }) {
       : "step-secondary";
 
   return (
-    <ul className="steps steps-horizontal w-full my-6">
-      <li className={`step ${submittedStep}`}>
-        <div className="flex flex-col items-center">
-          <span className="flex items-center gap-1">
-            {/* Paper plane icon for Submitted */}
-            <svg
-              className="w-5 h-5"
-              fill="none"
-              stroke="#8be9fd"
-              strokeWidth="2"
-              viewBox="0 0 24 24"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <path d="M22 2L11 13" />
-              <path d="M22 2l-6 20-4-9-9-4z" />
-            </svg>
-            Submitted
-          </span>
-          <span className="text-[10px] text-gray-400">
-            {new Date(createdAt).toLocaleString()}
-          </span>
-        </div>
-      </li>
-      <li className={`step ${inReviewStep}`}>
-        <div className="flex flex-col items-center">
-          <span className="flex items-center gap-1">
-            {/* Hourglass icon for In Review */}
-            <svg
-              className="w-5 h-5"
-              fill="none"
-              stroke="#ff79c6"
-              strokeWidth="2"
-              viewBox="0 0 24 24"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <path d="M8 7c0 4 8 4 8 0" />
-              <path d="M8 17c0-4 8-4 8 0" />
-              <rect x="3" y="2" width="18" height="20" rx="2" ry="2" />
-            </svg>
-            In Review
-          </span>
-          {isInReview && (
-            <span className="text-[10px] text-gray-400">
-              {new Date(updatedAt).toLocaleString()}
+    <>
+      {/* Custom CSS overrides using only Dracula colors */}
+      <style jsx>{`
+        /* Submitted: step-primary using cyan and purple */
+        .step-primary[data-content]:before {
+          background: linear-gradient(135deg, #8be9fd, #bd93f9);
+          border: .5px solid #bd93f9;
+        }
+        /* In Review: step-info using pink and purple */
+        .step-info[data-content]:before {
+          background: linear-gradient(135deg, #ff79c6, #bd93f9);
+          border: .5px solid #bd93f9;
+        }
+        /* Accepted: step-success using green and cyan */
+        .step-success[data-content]:before {
+          background: linear-gradient(135deg, #50fa7b, #8be9fd);
+          border: .5px solid #bd93f9;
+        }
+        /* Rejected: step-error using red and pink */
+        .step-error[data-content]:before {
+          background: linear-gradient(135deg, #ff5555, #ff79c6);
+          border: .5px solid #bd93f9;
+        }
+        /* Inactive: step-secondary using dark gray background */
+        .step-secondary[data-content]:before {
+          background: #44475a;
+          border: .5px solid #bd93f9;
+        }
+      `}</style>
+
+      <ul className="steps steps-horizontal w-full my-6 justify-center">
+        {/* Step 1: Submitted */}
+        <li className={`step ${submittedStep}`} data-content="1">
+          <div className="flex flex-col items-center mt-4">
+            <span className="flex items-center gap-1">
+              {/* Paper plane icon for Submitted */}
+              <svg
+                className="w-5 h-5"
+                fill="none"
+                stroke="#8be9fd"
+                strokeWidth="2"
+                viewBox="0 0 24 24"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M22 2L11 13" />
+                <path d="M22 2l-6 20-4-9-9-4z" />
+              </svg>
+              Submitted
             </span>
-          )}
-        </div>
-      </li>
-      <li className={`step ${outcomeStep}`}>
-        <div className="flex flex-col items-center">
-          <span className="flex items-center gap-1">
-            {status === "accepted" ? (
-              <>
-                {/* Check icon for Accepted */}
-                <svg
-                  className="w-5 h-5"
-                  fill="none"
-                  stroke="#50fa7b"
-                  strokeWidth="2"
-                  viewBox="0 0 24 24"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path d="M9 11l3 3L22 4" />
-                  <path d="M21 10A9 9 0 1112 3a9 9 0 019 7z" />
-                </svg>
-                Accepted
-              </>
-            ) : status === "rejected" ? (
-              <>
-                {/* X icon for Rejected */}
-                <svg
-                  className="w-5 h-5"
-                  fill="none"
-                  stroke="#ff5555"
-                  strokeWidth="2"
-                  viewBox="0 0 24 24"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <circle cx="12" cy="12" r="9" />
-                  <line x1="9" y1="9" x2="15" y2="15" />
-                  <line x1="15" y1="9" x2="9" y2="15" />
-                </svg>
-                Rejected
-              </>
-            ) : (
-              "Outcome"
+            <span className="text-[10px] text-gray-400">
+              {new Date(createdAt).toLocaleString()}
+            </span>
+          </div>
+        </li>
+
+        {/* Step 2: In Review */}
+        <li className={`step ${inReviewStep}`} data-content="2">
+          <div className="flex flex-col items-center mt-4">
+            <span className="flex items-center gap-1">
+              {/* Hourglass icon for In Review */}
+              <svg
+                className="w-5 h-5"
+                fill="none"
+                stroke="#ff79c6"
+                strokeWidth="2"
+                viewBox="0 0 24 24"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M8 7c0 4 8 4 8 0" />
+                <path d="M8 17c0-4 8-4 8 0" />
+                <rect x="3" y="2" width="18" height="20" rx="2" ry="2" />
+              </svg>
+              In Review
+            </span>
+            {isInReview && (
+              <span className="text-[10px] text-gray-400">
+                {new Date(updatedAt).toLocaleString()}
+              </span>
             )}
-          </span>
-          {isOutcome && (
-            <span className="text-[10px] text-gray-400">
-              {new Date(updatedAt).toLocaleString()}
+          </div>
+        </li>
+
+        {/* Step 3: Accepted/Rejected/Outcome */}
+        <li className={`step ${outcomeStep}`} data-content="3">
+          <div className="flex flex-col items-center mt-4">
+            <span className="flex items-center gap-1">
+              {status === "accepted" ? (
+                <>
+                  {/* Check icon for Accepted */}
+                  <svg
+                    className="w-5 h-5"
+                    fill="none"
+                    stroke="#50fa7b"
+                    strokeWidth="2"
+                    viewBox="0 0 24 24"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d="M9 11l3 3L22 4" />
+                    <path d="M21 10A9 9 0 1112 3a9 9 0 019 7z" />
+                  </svg>
+                  Accepted
+                </>
+              ) : status === "rejected" ? (
+                <>
+                  {/* X icon for Rejected */}
+                  <svg
+                    className="w-5 h-5"
+                    fill="none"
+                    stroke="#ff5555"
+                    strokeWidth="2"
+                    viewBox="0 0 24 24"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <circle cx="12" cy="12" r="9" />
+                    <line x1="9" y1="9" x2="15" y2="15" />
+                    <line x1="15" y1="9" x2="9" y2="15" />
+                  </svg>
+                  Rejected
+                </>
+              ) : (
+                "Outcome"
+              )}
             </span>
-          )}
-        </div>
-      </li>
-    </ul>
+            {isOutcome && (
+              <span className="text-[10px] text-gray-400">
+                {new Date(updatedAt).toLocaleString()}
+              </span>
+            )}
+          </div>
+        </li>
+      </ul>
+    </>
   );
 }
 

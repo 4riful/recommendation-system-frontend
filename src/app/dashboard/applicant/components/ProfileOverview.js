@@ -1,5 +1,5 @@
 "use client";
-
+import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import {
@@ -20,7 +20,8 @@ import {
   FaMapMarkerAlt,
 } from "react-icons/fa";
 
-const placeholderImage = "https://ui-avatars.com/api/?name=Profile&background=44475a&color=f8f8f2";
+const placeholderImage =
+  "https://ui-avatars.com/api/?name=Profile&background=44475a&color=f8f8f2";
 
 // Simple helper to format ISO date strings into a more readable format
 function formatDate(dateString) {
@@ -37,8 +38,11 @@ function formatDate(dateString) {
 }
 
 export default function ProfileCard({ profile }) {
+  // Instantiate router from useRouter
+  const router = useRouter();
   const [imageError, setImageError] = useState(false);
   const [showDetails, setShowDetails] = useState(false);
+
   useEffect(() => {
     if (profile !== undefined && profile !== null && !profile.applicantProfileId) {
       router.push("/dashboard/applicant/profile/create");
@@ -158,27 +162,26 @@ export default function ProfileCard({ profile }) {
    * 5. Render Card
    ***********************************************/
   return (
-    <div className="card w-full bg-[#282a36] text-[#f8f8f2]  shadow-xl">
+    <div className="card w-full bg-[#282a36] text-[#f8f8f2] shadow-xl">
       <div className="card-body">
         {/* Header Row: Picture, Name, Status, Radial on Desktop */}
         <div className="flex flex-col md:flex-row items-center gap-6">
           {/* Profile Picture */}
           <div className="avatar">
             <div className="w-28 h-28 rounded-full ring ring-primary ring-offset-2 overflow-hidden">
-            <Image
-     src={
-    !imageError
-      ? profile.profile_picture_path || placeholderImage
-      : placeholderImage
-    }
-  alt="Profile Picture"
-  width={112}
-  height={112}
-  unoptimized
-  onError={() => setImageError(true)}
-  className="object-cover"
-/>
-  
+              <Image
+                src={
+                  !imageError
+                    ? profile.profile_picture_path || placeholderImage
+                    : placeholderImage
+                }
+                alt="Profile Picture"
+                width={112}
+                height={112}
+                unoptimized
+                onError={() => setImageError(true)}
+                className="object-cover"
+              />
             </div>
           </div>
 
@@ -272,14 +275,18 @@ export default function ProfileCard({ profile }) {
               : "N/A"}
           </p>
 
-          {/* Introduction */}
-          <p className="flex items-center text-[#ff79c6]">
-            <FaPenAlt className="mr-2" />
-            <span className="font-semibold mr-1">Introduction:</span>
-            {profile.intro
-              ? profile.intro.toUpperCase()
-              : "NO INTRODUCTION PROVIDED."}
-          </p>
+          {/* Introduction (FIXED) */}
+          <div className="flex items-start text-[#ff79c6]">
+            <FaPenAlt className="mr-2 mt-1" />
+            <div>
+              <span className="font-semibold mr-1">Introduction:</span>
+              <p className="whitespace-pre-line">
+                {profile.intro
+                  ? profile.intro.toUpperCase()
+                  : "NO INTRODUCTION PROVIDED."}
+              </p>
+            </div>
+          </div>
         </div>
 
         {/* Stats (Academic, Skills, etc.) */}
@@ -420,7 +427,7 @@ export default function ProfileCard({ profile }) {
               title="References"
             >
               {isReferencesComplete ? (
-                <ul className="list-disc ml-6 space-y-2">
+                <ul className="list-disc ml-6 space-y=2">
                   {profile.References.map((ref) => (
                     <li key={ref.reference_id}>
                       <p className="font-semibold">{ref.name}</p>
@@ -449,21 +456,26 @@ export default function ProfileCard({ profile }) {
                     const isVerified = paper.review_status === "VERIFIED";
                     return (
                       <li key={paper.paper_id}>
-                        {/* Paper Title + Verified Check */}
                         <p className="font-semibold flex items-center">
                           {paper.paper_title}
                           {isVerified && (
-                            <FaCheckCircle className="text-green-400 ml-2" title="Verified Paper" />
+                            <FaCheckCircle
+                              className="text-green-400 ml-2"
+                              title="Verified Paper"
+                            />
                           )}
                         </p>
                         <p className="text-sm text-[#f1fa8c]">
                           Journal: {paper.journal_name} (DOI: {paper.doi})
                         </p>
                         <p className="text-sm">
-                          Publication Date: {formatDate(paper.publication_date)}, Citations:{" "}
+                          Publication Date:{" "}
+                          {formatDate(paper.publication_date)}, Citations:{" "}
                           {paper.citation_count}
                         </p>
-                        <p className="text-xs italic">Authors: {paper.authors}</p>
+                        <p className="text-xs italic">
+                          Authors: {paper.authors}
+                        </p>
                         <p className="text-xs mt-1">
                           <strong>Abstract:</strong> {paper.abstract}
                         </p>
